@@ -98,8 +98,7 @@ for (var y = 0; y < image.height; y ++) {
     const c = image.getPixel (x, y);
     var [h, s, l] = rgbToHsl (color.rgbaR (c), color.rgbaG (c), color.rgbaB (c));
     if (DEBUG) log ("hsl=" + [h,s,l]);
-    l = l * 1.1;
-    if (l > 100) l = 100;
+    s = 0;
     const [r, g, b] = hslToRgb (h, s, l);
     if (DEBUG) log ("rgb=" + [r,g,b]);
     image.putPixel (x, y, color.rgba (r, g, b, color.rgbaA (c)));

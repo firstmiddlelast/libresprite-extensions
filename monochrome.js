@@ -1,3 +1,11 @@
+/** EDIT THIS TO FIT YOUR NEEDS */
+const HUE = 45;     // This is an angular value on the HSL color wheel, in degrees °, of the hue you want your sprite to be. 
+
+
+
+
+
+
 const color = app.pixelColor;
 const image = app.activeImage;
 
@@ -98,8 +106,8 @@ for (var y = 0; y < image.height; y ++) {
     const c = image.getPixel (x, y);
     var [h, s, l] = rgbToHsl (color.rgbaR (c), color.rgbaG (c), color.rgbaB (c));
     if (DEBUG) log ("hsl=" + [h,s,l]);
-    l = l * 1.1;
-    if (l > 100) l = 100;
+    s = 100;
+    h = HUE;
     const [r, g, b] = hslToRgb (h, s, l);
     if (DEBUG) log ("rgb=" + [r,g,b]);
     image.putPixel (x, y, color.rgba (r, g, b, color.rgbaA (c)));

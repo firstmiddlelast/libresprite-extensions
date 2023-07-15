@@ -55,13 +55,13 @@ function hslToRgb(h, s, l) {
   h /= 360;
   s /= 100;
   l /= 100;
-    log ("h="+h+"s="+s+"l="+l);
+    if (DEBUG) log ("h="+h+"s="+s+"l="+l);
 
   var r, g, b;
 
   if (s === 0) {
     // Achromatic (gray)
-    log ("achromatic");
+    if (DEBUG) log ("achromatic");
     r = g = b = l;
   } else {
     var hue2rgb = function hue2rgb(p, q, t) {
