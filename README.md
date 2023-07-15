@@ -8,7 +8,7 @@ You can easily change these values in the script, around line 101 at the time of
 
 - The `grisaille` script just removes all the color from your sprite and turns it into shades of grey (but the sprite and color palette is still rgb). 
 
-- The `monochrome` script makes it.. monochrome. There is no dialog to pick the color, so you have to edit the first line of code in the script to select the hue you want. 
+- The `monochrome` script makes it.. monochrome. There is no dialog to pick the color, so you have to edit the first lines of code in the script to select the hue you want (see the script first lines for additional help). 
 
 **Warnings**
 
