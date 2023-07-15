@@ -1,5 +1,6 @@
-/** EDIT THIS TO FIT YOUR NEEDS */
-const HUE = 45;     // This is an angular value on the HSL color wheel, in degrees °, of the hue you want your sprite to be. 
+/** EDIT THE FOLLOWIN LINES TO FIT YOUR NEEDS. EXACTLY ONE OF THE TWO LINES BELOW MUST BE COMMENTED OUT WITHAN "//" INSERTED AT THE START OF THE LINE.  */
+const HUE = 270;     // This is an angular value on the HSL color wheel, in degrees °, of the hue you want your sprite to be. 0 = red, 90 = green, 180 = cyan, 270 = purple. 
+//const HUE = [204, 66, 94];     // Replace the numbers between parenthesis with the Red, Green, Blue components of the color you want in your sprite 
 
 
 
@@ -107,7 +108,12 @@ for (var y = 0; y < image.height; y ++) {
     var [h, s, l] = rgbToHsl (color.rgbaR (c), color.rgbaG (c), color.rgbaB (c));
     if (DEBUG) log ("hsl=" + [h,s,l]);
     s = 100;
-    h = HUE;
+    if (HUE instanceof Array) {
+        h = rgbToHsl (HUE [0], HUE [1], HUE [2]) [0];
+    }
+    else {
+        h = HUE;
+    }
     const [r, g, b] = hslToRgb (h, s, l);
     if (DEBUG) log ("rgb=" + [r,g,b]);
     image.putPixel (x, y, color.rgba (r, g, b, color.rgbaA (c)));
