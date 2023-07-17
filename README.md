@@ -13,7 +13,10 @@ You can easily change these values in the script, around line 101 at the time of
 - The `outline` script creates an outline around all the non-transparent pixels of an image. You can edit the first lines of the script to select the outline color and the outline mode (either with or without diagonals). What's more, due to the way sprites are stored in LibreSprite, you need to draw a non-empty pixel on the top left and bottom right of your sprite before using the script. You can delete these pixels after the outline has been drawn.
 Exemple use : select the item you want to outline with the magic wand, copy it into a new sprite at least 2 pixels larger (to give room for the outline), draw the top left and bottom right pixels, and use the script. Then you can copy the outlined item back into your project.
 
-- the `palettize` script changes the pixels in your image to the closest color in your palette. Example use : load an image, load your palette, use the scripts : now your image is composed of pixels that belong in your palette. 
+- the `palettize` script changes the pixels in your image to the closest color in your palette. Example use : load an image, load your palette, use the scripts : now your image is composed of pixels that belong in your palette. You can select one of "RGB" or "LAB" methods by editing the beginning of the file ; "LAB" often gives worse results than "RGB" but it can lead to interesting results.
+
+- the `pixellate` script creates pixels of the specified size at the beginning of the script. This can be useful if you want to "pixellate" an image without changing its size (i.e. making "big" pixels). You can select one of "RGB" or "LAB" methods, they give slightly different results from which you may choose. 
+
 
 **Warnings**
 
