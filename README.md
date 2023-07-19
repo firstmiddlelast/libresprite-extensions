@@ -17,7 +17,7 @@ Exemple use : select the item you want to outline with the magic wand, copy it i
 
 - the `pixellate` script creates pixels of the specified size at the beginning of the script. This can be useful if you want to "pixellate" an image without changing its size (i.e. making "big" pixels). You can select one of "RGB" or "LAB" methods, they give slightly different results from which you may choose. 
 
-- the `countTiles` script counts unique tiles in the sprite and displays the results in the console, in the form : "{number of occurences} : {list of coordinates of the tiles that have that number of occurences}". The number of unique tiles is displayed first. 
+- the `countTiles` script counts unique tiles in the sprite and displays the results in the console, in the form : "{number of occurences} : {list of coordinates of the tiles that have that number of occurences}". The number of unique tiles is displayed first. You need to edit the first line of the script to fit your tile size. 
 
 **Warnings**
 
