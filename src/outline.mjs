@@ -1,4 +1,3 @@
-(function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c="function"==typeof require&&require;if(!f&&c)return c(i,!0);if(u)return u(i,!0);var a=new Error("Cannot find module '"+i+"'");throw a.code="MODULE_NOT_FOUND",a}var p=n[i]={exports:{}};e[i][0].call(p.exports,function(r){var n=e[i][1][r];return o(n||r)},p,p.exports,r,e,n,t)}return n[i].exports}for(var u="function"==typeof require&&require,i=0;i<t.length;i++)o(t[i]);return o}return r})()({1:[function(require,module,exports){
 /** EDIT THE FOLLOWIN LINES TO FIT YOUR NEEDS. */
 const OUTLINE_COLOR = [255, 0, 0, 255];     // Replace the numbers between parenthesis with the Red, Green, Blue and Alpha components (between 0 and 255) of the outline color. Alpha MUST NOT be 0. 
 const OUTLINE_DIAGONALS = true;    // Replace false with true if you want to outline diagonally. 
@@ -79,5 +78,3 @@ for (var y = 0; y < image.height; y ++) {
     }
   }
 }
-
-},{}]},{},[1]);
