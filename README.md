@@ -20,7 +20,7 @@ Exemple use : select the item you want to outline with the magic wand, copy it i
 - `countTiles` counts unique tiles in the sprite and displays the results in the console, in the form : "{number of occurences} : {list of coordinates of the tiles that have that number of occurences}". The number of unique tiles is displayed first. You need to edit the script to fit your tile size (look for the string "EDIT").
 
 - `reducePalette` reduces the palette size : when 2 colors are close to each other in the palette, it removes one of them. This does NOT change the image, just the palette. You can select your target palette size by editing the script file (look for the string "EDIT"). 
-Currently, when two colors are alike, it removes the last one in the palette. TODO, WIP : remove the one that's the closest to all the others. 
+When two colors are alike, it removes the first, or the last one in the palette, or the one that's the closest to all the other colors, depending on the option you select by editing the file. 
 
 **Warnings**
 
