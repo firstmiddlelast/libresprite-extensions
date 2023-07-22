@@ -1,6 +1,12 @@
 /* EDIT THE FOLLOWING LINES TO FIT YOUR NEEDS */
-/* ONE OF THE FOLLOWING LINES MUST BE COMMENTED OUT WITH // */
 const TARGET_PALETTE_LENGTH = 16; // The final size of the palette after color that are alike have been merged
+
+/* ONE OUT OF THE FOLLOWING LINES MUST NOT BE COMMENTED OUT WITH // */
+//const COLOR_REMOVAL_SELECTION = "CLOSEST_TO_OTHERS";  // The color removed is the one that's closest to the other colors
+//const COLOR_REMOVAL_SELECTION = "LAST";  // The color removed is the last in the palette
+const COLOR_REMOVAL_SELECTION = "FIRST";  // The color removed is the first in the palette
+
+/* ONE OUT OF THE FOLLOWING LINES MUST NOT BE COMMENTED OUT WITH // */
 const COLOR_MODE = "RGB";
 //const COLOR_MODE = "LAB";
 
@@ -52,10 +58,28 @@ while (palette.length > TARGET_PALETTE_LENGTH) {
                 return closestColor; 
         }
         , [[-1, Infinity]]);
-    const sourceColor = closestColor [0] [0] [0];
-    const targetColor = closestColor [0] [0] [1]; 
-    //console.log ("sourceColor="+sourceColor+",targetColor="+targetColor);
-    for (cIndex = Math.max (sourceColor, targetColor); cIndex < palette.length - 1; cIndex ++) {
+    const color1 = closestColor [0] [0] [0];
+    const color2 = closestColor [0] [0] [1]; 
+    var selectedColor = color1;
+    switch (COLOR_REMOVAL_SELECTION) {
+        case "CLOSEST_TO_OTHERS":
+            var color1Distance = 0;
+            var color2Distance = 0;
+            for (cIndex = 0; cIndex < palette.length; cIndex ++) {
+                if (cIndex !== color1 && cIndex !== color2) {
+                    color1Distance += distanceFunction (PALETTE_RGBA [cIndex] [0], PALETTE_RGBA [cIndex] [1],PALETTE_RGBA [cIndex] [2], PALETTE_RGBA [color1] [0], PALETTE_RGBA [color1] [1], PALETTE_RGBA [color1] [2]);
+                    color2Distance += distanceFunction (PALETTE_RGBA [cIndex] [0], PALETTE_RGBA [cIndex] [1],PALETTE_RGBA [cIndex] [2], PALETTE_RGBA [color2] [0], PALETTE_RGBA [color2] [1], PALETTE_RGBA [color2] [2]);
+                }
+            }
+            if (color2Distance < color1Distance) selectedColor = color2;
+            break;
+        case "FIRST": 
+            break;
+        case "LAST":
+            selectedColor = color2;
+            break;
+    }
+    for (cIndex = selectedColor; cIndex < palette.length - 1; cIndex ++) {
         palette.set (cIndex, color.rgba (PALETTE_RGBA [cIndex + 1] [0], PALETTE_RGBA [cIndex + 1] [1], PALETTE_RGBA [cIndex + 1] [2], PALETTE_RGBA [cIndex + 1] [3]));
     }
     palette.length = palette.length - 1;
