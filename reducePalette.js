@@ -120,9 +120,9 @@ function rgbDistance(r, g, b, r2, g2, b2) {
 const TARGET_PALETTE_LENGTH = 16; // The final size of the palette after color that are alike have been merged
 
 /* ONE OUT OF THE FOLLOWING LINES MUST NOT BE COMMENTED OUT WITH // */
-//const COLOR_REMOVAL_SELECTION = "CLOSEST_TO_OTHERS";  // The color removed is the one that's closest to the other colors
+const COLOR_REMOVAL_SELECTION = "CLOSEST_TO_OTHERS";  // The color removed is the one that's closest to the other colors
 //const COLOR_REMOVAL_SELECTION = "LAST";  // The color removed is the last in the palette
-const COLOR_REMOVAL_SELECTION = "FIRST";  // The color removed is the first in the palette
+//const COLOR_REMOVAL_SELECTION = "FIRST";  // The color removed is the first in the palette
 
 /* ONE OUT OF THE FOLLOWING LINES MUST NOT BE COMMENTED OUT WITH // */
 const COLOR_MODE = "RGB";
