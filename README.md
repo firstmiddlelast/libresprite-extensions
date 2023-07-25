@@ -22,7 +22,9 @@ Exemple use : select the item you want to outline with the magic wand, copy it i
 - `reducePalette` reduces the palette size : when 2 colors are close to each other in the palette, it removes one of them. This does NOT change the image, just the palette. You can select your target palette size by editing the script file (look for the string "EDIT"). 
 When two colors are alike, it removes the first, or the last one in the palette, or the one that's the closest to all the other colors, depending on the option you select by editing the file.
 
-- `reduceTilesCount` reduces the number of tiles required to draw the current image. It does this by replacing tiles that resemble the most to other tiles, starting by the rarest ones. The difference between two tiles is the sum of the rgb differences between both tile pixels -but other algorithms are possible, hit me if you think another way of calculating this would be better. You can adjust the tile size and the final tiles count by editing the script (look for the string "EDIT"). 
+- `reduceTilesCount` reduces the number of tiles required to draw the current image. It does this by replacing tiles that resemble the most to other tiles, starting by the rarest ones. The difference between two tiles is the sum of the rgb differences between both tile pixels -but other algorithms are possible, hit me if you think another way of calculating this would be better. You can adjust the tile size and the final tiles count by editing the script (look for the string "EDIT").
+
+- `reorganizePalette` reorders the colors in your palette according to your specifications (by HSL or RGB components, pixel count, or whiteness). Details can be found in the script file, after the string "EDIT".  
 
 **Warnings**
 
