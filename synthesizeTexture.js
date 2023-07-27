@@ -843,8 +843,8 @@ if (typeof module == 'object' && module.exports) {
 
 var _quilting = require("./lib/quilting.mjs");
 /** EDIT THE FOLLOWING LINES TO FIT YOUR NEEDS */
-const OVERLAP_RATIO = 1 / 6; // The size of the overlap between blocks
-const PATCH_SIZE_RATIO = 1 / 2; // The size of the blocks that should be patched
+const OVERLAP_RATIO = 1 / 6; // Determines the size of the overlap between blocks by its ratio to the input texture image. Must be between 0 and 1. The higher it is, the more the blocks fit into each other, and the longer the compute time is. The lower it is, the more blocks are visible on the resulting image. Usual values are between 0.1 and 1/3. 
+const PATCH_SIZE_RATIO = 1 / 2; // Determines the size of the blocks that should be patched by their ratio to the input texture image. Must be between 0 and 1. The higher it is, the more the input texture image is 'copied' into the output image, and the faster the computation is. The lower it is, the longer the compute time, and the more random the result. Usual values are between 1/3 and 3/4. 
 // ONLY ONE OF THE THREE FOLLOWING LINES MUST NOT BE COMMENTED OUT WITH //
 //const DISTANCE_FUNC = "l1";   // The sum of the R, G and B distances
 const DISTANCE_FUNC = "l2"; // The square root of the squared R, G, B distances (SSD)
