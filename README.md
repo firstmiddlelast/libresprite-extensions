@@ -24,7 +24,9 @@ When two colors are alike, it removes the first, or the last one in the palette,
 
 - `reduceTilesCount` reduces the number of tiles required to draw the current image. It does this by replacing tiles that resemble the most to other tiles, starting by the rarest ones. The difference between two tiles is the sum of the rgb differences between both tile pixels -but other algorithms are possible, hit me if you think another way of calculating this would be better. You can adjust the tile size and the final tiles count by editing the script (look for the string "EDIT").
 
-- `reorganizePalette` reorders the colors in your palette according to your specifications (by HSL or RGB components, pixel count, or whiteness). Details can be found in the script file, after the string "EDIT".  
+- `reorganizePalette` reorders the colors in your palette according to your specifications (by HSL or RGB components, pixel count, or whiteness). Details can be found in the script file, after the string "EDIT".
+
+- `synthesizeTexture` fills an image with a texture that is created using the Image Quilting algorithm by Alexei A. Efros and William T. Freeman. To use it, you need to put your texture in an empty image, exactly at the top left corner. Then, you need to set a non-empty pixel at the bottom right of your image -you can draw anything with the pen, or paste your texture.. anything, so long as the bottom and the right borer of the image is touched by a non transparent pixel. And then, just use the script. The result is partially random, so you will get different results every time. You can adjust the script parameters in the script, as usual, by looking for the string "EDIT". Read carefully the parameters description. 
 
 **Warnings**
 
