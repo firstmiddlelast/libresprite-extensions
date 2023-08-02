@@ -1,23 +1,4 @@
-/* EDIT THE FOLLOWING LINES TO FIT YOUR NEEDS */
-// ONLY ONE OF THE FOLLOWING LINES MUST BE COMMENTED OUT WITH //
-const GRID_TYPE = "HORIZONTAL";
-//const GRID_TYPE = "VERTICAL";
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+var gridType = "HORIZONTAL";
 const image = app.activeImage;
 if (image === undefined) throw "Draw the left-to-bottom edge line of the tile please.";
 const pixel = image.getPixel (0, 0);
@@ -26,13 +7,11 @@ if (pixel === 0) throw "Plot the bottom right of the grid please.";
 if (image.height === 0) throw "Draw the left-to-bottom edge line of the diamond please.";
 var y = 0;
 const steps = [];
-if (GRID_TYPE === "VERTICAL") {
-    while (image.getPixel (0, y) !== 0) {
-        y ++;
-        if (y === image.height) throw "Plot the bottom right of the grid please.";
-    }
-    if (y === 1) throw "Draw the vertical edge of the tile starting at the left and going towards the bottom please.";
+while (image.getPixel (0, y) !== 0) {
+    y ++;
+    if (y === image.height) throw "Plot the bottom right of the grid please.";
 }
+if (y > 1) gridType = "VERTICAL";
 const tileHeight = y;
 y = 0;
 var x = 0;
@@ -61,7 +40,7 @@ x = 0;
 y = 0;
 yTop = 0;
 while (y < image.height) {
-    if (GRID_TYPE === "VERTICAL") {
+    if (gridType === "VERTICAL") {
         for (var h = 0; h < tileHeight; h ++) {
             putPixel (x, y + h);
         }
@@ -71,11 +50,11 @@ while (y < image.height) {
         y += step [1];
         yTop -= step [1];
         putPixel (x, y);
-        if (GRID_TYPE === "HORIZONTAL") {
+        if (gridType === "HORIZONTAL") {
             putPixel (x, yTop);
         }
     }
-    if (GRID_TYPE === "VERTICAL") {
+    if (gridType === "VERTICAL") {
         for (var h = 0; h < tileHeight; h ++) {
             putPixel (x, y + h);
         }
@@ -85,17 +64,17 @@ while (y < image.height) {
         y -= step [1];
         yTop += step [1];
         putPixel (x, y);
-        if (GRID_TYPE === "HORIZONTAL") {
+        if (gridType === "HORIZONTAL") {
             putPixel (x, yTop);
         }
     }
-    if (GRID_TYPE === "VERTICAL") {
+    if (gridType === "VERTICAL") {
         for (var h = 0; h < tileHeight; h ++) {
             putPixel (x, y + h);
         }
     }
     if (x > image.width) {
-        if (GRID_TYPE === "HORIZONTAL") {
+        if (gridType === "HORIZONTAL") {
             y += tileDepth * 2;
             yTop += tileDepth * 2;
         }
