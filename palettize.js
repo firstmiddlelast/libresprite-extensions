@@ -218,12 +218,12 @@ const COLOR_MODE = "RGB";
 //const COLOR_MODE = "LAB";
 
 // ONLY ONE OF THE FOLLOWING LINES MUST NOT BE COMMENTED OUT WITH // 
-const DITHER_MODE = "NONE";
+//const DITHER_MODE = "NONE";
 //const DITHER_MODE = "ATKINSON";
 //const DITHER_MODE = "FLOYD-STEINBERG";
 //const DITHER_MODE = "JARVIS-JUDICE-NINKE";
 //const DITHER_MODE = "ORDERED2X2";
-//const DITHER_MODE = "ORDERED4X4";
+const DITHER_MODE = "ORDERED4X4";
 //const DITHER_MODE = "ORDERED8X8";
 //const DITHER_MODE = "ORDERED16X16";
 
@@ -394,7 +394,7 @@ function setDitheredPixel (threshold, ditherValue, x, y, pixelR, pixelG, pixelB)
     if (MIXED_RESULT === undefined) setupMixedResults (threshold);  // NOTE Ugly, should be initialized out of the xy pixel loop
     const closestMixedColor = cachedClosestMixedColor (pixelR, pixelG, pixelB);   // TODO inline this function
     if (ditherValue < closestMixedColor [2]) {
-        PIXELS [x] [y] = [...PALETTE_RGB [closestMixedColor [0]], 127];
+        PIXELS [x] [y] = [...PALETTE_RGB [closestMixedColor [0]], 255];
     }
     else {
         PIXELS [x] [y] = [...PALETTE_RGB [closestMixedColor [1]], 255]
