@@ -1,8 +1,8 @@
 (function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c="function"==typeof require&&require;if(!f&&c)return c(i,!0);if(u)return u(i,!0);var a=new Error("Cannot find module '"+i+"'");throw a.code="MODULE_NOT_FOUND",a}var p=n[i]={exports:{}};e[i][0].call(p.exports,function(r){var n=e[i][1][r];return o(n||r)},p,p.exports,r,e,n,t)}return n[i].exports}for(var u="function"==typeof require&&require,i=0;i<t.length;i++)o(t[i]);return o}return r})()({1:[function(require,module,exports){
 /* EDIT THE LINES BELOW TO FIT YOUR NEEDS */
 // ONLY ONE OF THE LINES BELOW MUST NOT BE COMMENTED OUT WITH //
-//const GRADIENT_ORDER = "RGB";
-const GRADIENT_ORDER = "HSL";
+const GRADIENT_ORDER = "RGB";
+//const GRADIENT_ORDER = "HSL";
 
 
 
@@ -173,8 +173,15 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.rgbDistance = rgbDistance;
-function rgbDistance(r, g, b, r2, g2, b2) {
-  return Math.sqrt((r2 - r) ** 2 + (g2 - g) ** 2 + (b2 - b) ** 2);
+// For the formula, see https://bisqwit.iki.fi/story/howto/dither/jy/
+function rgbDistance(r1, g1, b1, r2, g2, b2) {
+  const luma1 = (r1 * 299 + g1 * 587 + b1 * 114) / (255.0 * 1000);
+  const luma2 = (r2 * 299 + g2 * 587 + b2 * 114) / (255.0 * 1000);
+  const lumadiff = luma1 - luma2;
+  const diffR = (r1 - r2) / 255.0,
+    diffG = (g1 - g2) / 255.0,
+    diffB = (b1 - b2) / 255.0;
+  return (diffR * diffR * 0.299 + diffG * diffG * 0.587 + diffB * diffB * 0.114) * 0.75 + lumadiff * lumadiff;
 }
 
 },{}]},{},[1]);
