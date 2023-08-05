@@ -1,5 +1,9 @@
 # libresprite-extensions
-Scripts that update an image. Download them using the Code / Download Zip.. button, put them in the LibreSprite scripts directory (Scripts/Open Folder in LibreSprite), and the select Scripts/Rescan scripts. ONLY THE .JS FILES AT THE ROOT OF THE ZIP FILE ARE REQUIRED, the src/ directory can be omitted. 
+Scripts that update an image. 
+
+## Download 
+Click on the latest Release (see on the right of the page) and then, in the Assets section, click the "libresprite-extensions" .zip file. Alternatively, you can use the "Code / Download Zip.." button. 
+Unzip the files in the LibreSprite scripts directory ("Scripts/Open Folder" in LibreSprite), and the select "Scripts/Rescan scripts". ONLY THE .js FILES IN THE ZIP FILE ARE REQUIRED, the src/ directory can be omitted if it is present. 
 
 - `increase`/`decreaseLuminosity` directly increase/decrease the RGB components by 10%.
 
