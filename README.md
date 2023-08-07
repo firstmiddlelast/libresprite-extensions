@@ -2,7 +2,8 @@
 Scripts that update an image. 
 
 ## Download 
-Click on the latest Release (see on the right of the page) and then, in the Assets section, click the "libresprite-extensions" .zip file. Alternatively, you can use the "Code / Download Zip.." button. 
+Click on the latest Release (see on the right of the page) and then, in the Assets section, click the "libresprite-extensions" .zip file. 
+Alternatively, you can use the "Code / Download Zip.." button. 
 Unzip the files in the LibreSprite scripts directory ("Scripts/Open Folder" in LibreSprite), and the select "Scripts/Rescan scripts". ONLY THE .js FILES IN THE ZIP FILE ARE REQUIRED, the src/ directory can be omitted if it is present. 
 
 - `increase`/`decreaseLuminosity` directly increase/decrease the RGB components by 10%.
@@ -36,7 +37,9 @@ When two colors are alike, it removes the first, or the last one in the palette,
 
 - `fillGradient` creates a rectangle between two pixels and fills it with a linear gradients between the two top left and bottom right colors. This script will fill the whole image, so it's better if it's used on an empty sprite image/layer, where you just plot a top left and bottom right pixel of the desired colors, and then run the script. You can change the gradient progression from hsl to rgb in the editable part of the file (look for "EDIT"). Other progressions (like sine, polynomial, parabolic.. any function really) can and will be added in the future. If you plan to rotate the dithered gradient (using the palettize script), make sure you rotate the gradient _before_ dithering it with palettize.
 
-- `isometricGrid` draws an isometric grid. On an empty layer, draw the left-to-bottom diagonal edge of an isometric tile, then plot a point at the bottom right of the layer and use the script : the layer will be filled with an isometric grid. You can also draw the grid for a forward-facing vertical wall, by drawing a vertical line going towards the bottom, starting at the top left of your firstly drawn edge line, then using the script. 
+- `isometricGrid` draws an isometric grid. On an empty layer, draw the left-to-bottom diagonal edge of an isometric tile, then plot a point at the bottom right of the layer and use the script : the layer will be filled with an isometric grid. You can also draw the grid for a forward-facing vertical wall, by drawing a vertical line going towards the bottom, starting at the top left of your firstly drawn edge line, then using the script.
+
+- `ellipticGradient` does for ellipses what the `fillGradient` script does for rectangles : it fills ellipses with gradients. Nothing special here, except two things : the ellipses have to be contained in the image whole ; and each ellipse should contain only one inner ellipse. 
 
 **Warnings**
 
