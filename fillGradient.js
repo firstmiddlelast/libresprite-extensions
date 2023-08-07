@@ -27,10 +27,23 @@ const hsl = require ('./lib/hsl.mjs');
 const color = app.pixelColor;
 const image = app.activeImage;
 
-const startPixel = image.getPixel (0,0);
-const finishPixel = image.getPixel (image.width - 1, image.height - 1);
+const pixelSteps = [];
+pixelSteps.push ([image.getPixel (0, 0), 0]);
+for (var x = 0; x < image.width; x ++) {
+    for (var y = 0; y < image.height; y ++) {
+        const p = image.getPixel (x, y);
+        if (p !== 0 && p !== pixelSteps [pixelSteps.length - 1] [0]) {
+            pixelSteps.push ([p, x]);
+            break;
+        }
+    }
+}
 
-if (startPixel !== 0 && finishPixel !== 0) {
+
+while (pixelSteps.length > 1) {
+    const [startPixel, xStart] = pixelSteps.shift ();
+    const [finishPixel, xEnd] = pixelSteps [0];
+
     var r = color.rgbaR (startPixel);
     var g = color.rgbaG (startPixel);
     var b = color.rgbaB (startPixel);
@@ -40,11 +53,11 @@ if (startPixel !== 0 && finishPixel !== 0) {
             const deltaG = color.rgbaG (finishPixel) - g;
             const deltaB = color.rgbaB (finishPixel) - b;
 
-            const sigmaR = deltaR / image.width;
-            const sigmaG = deltaG / image.width;
-            const sigmaB = deltaB / image.width;
+            const sigmaR = deltaR / (xEnd - xStart);
+            const sigmaG = deltaG / (xEnd - xStart);
+            const sigmaB = deltaB / (xEnd - xStart);
 
-            for (var x = 0; x < image.width; x ++) {
+            for (var x = xStart; x < xEnd; x ++) {
                 const pixelColor = color.rgba (r, g, b, 255);
                 for (var y = 0; y < image.height; y ++) {
                     image.putPixel (x, y, pixelColor);
@@ -59,11 +72,11 @@ if (startPixel !== 0 && finishPixel !== 0) {
             var [h2, s2, l2] = hsl.rgbToHsl (color.rgbaR (finishPixel), color.rgbaG (finishPixel), color.rgbaB (finishPixel));
             h = (h + 360) % 360;
             h2 = (h2 + 360) % 360;
-            const sigmaH = (h2 - h) / image.width;
-            const sigmaS = (s2 - s) / image.width;
-            const sigmaL = (l2 - l) / image.width;
+            const sigmaH = (h2 - h) / (xEnd - xStart);
+            const sigmaS = (s2 - s) / (xEnd - xStart);
+            const sigmaL = (l2 - l) / (xEnd - xStart);
 
-            for (var x = 0; x < image.width; x ++) {
+            for (var x = xStart; x < xEnd; x ++) {
                 [r, g, b] = hsl.hslToRgb (h, s, l);
                 const pixelColor = color.rgba (r, g, b, 255);
                 for (var y = 0; y < image.height; y ++) {
