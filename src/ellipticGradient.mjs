@@ -82,7 +82,7 @@ for (var ellipseIndex = 0; ellipseIndex < ellipses.length - 1; ellipseIndex ++) 
     const width = ellipse.width;
     const height = ellipse.height; 
     const maxDimension = Math.max (width, height);
-    const deltaAngle = Math.atan2 (1, maxDimension) * 180 / Math.PI / 2;    // NOTE TODO Avoid moirés
+    const deltaAngle = Math.atan2 (1, maxDimension) * 180 / Math.PI / 2;
     if (DEBUG) console.log ("deltaAngle="+deltaAngle);
     const r = color.rgbaR (ellipse.color);
     const g = color.rgbaG (ellipse.color);
@@ -91,22 +91,28 @@ for (var ellipseIndex = 0; ellipseIndex < ellipses.length - 1; ellipseIndex ++) 
     const rInt = color.rgbaR (ellipseInt.color);
     const gInt = color.rgbaG (ellipseInt.color);
     const bInt = color.rgbaB (ellipseInt.color);
-    const deltaR = rInt - r;
-    const deltaG = gInt - g;
-    const deltaB = bInt - b;
+    const deltaR = rInt * rInt - r * r;
+    const deltaG = gInt * gInt - g * g;
+    const deltaB = bInt * bInt - b * b;
     const deltaWidth = width - ellipseInt.width;
     const deltaHeight = height - ellipseInt.height;
-    const steps = Math.max (deltaWidth, deltaHeight) * 2;   // NOTE TODO Avoid moirés
+    const steps = Math.max (deltaWidth, deltaHeight) * 2;
     const deltaX = x - ellipseInt.x;
     const deltaY = y - ellipseInt.y;
     for (var step = 0; step <= steps; step ++) {
         const ratio = step / steps;
-        const mixedColor = color.rgba (rInt - deltaR * ratio, gInt - deltaG * ratio, bInt - deltaB * ratio, 255);
+        const mixedR = Math.sqrt (rInt*rInt - deltaR * ratio);
+        const mixedG = Math.sqrt (gInt*gInt - deltaG * ratio);
+        const mixedB = Math.sqrt (bInt*bInt - deltaB * ratio);
+        const mixedColor = color.rgba (mixedR, mixedG, mixedB, 255);
         for (var angle = 0; angle < 360; angle += deltaAngle) {
-            putPixel (ellipseInt.x + deltaX * ratio + Math.cos (angle) * (ellipseInt.width + deltaWidth * ratio), ellipseInt.y + deltaY * ratio + Math.sin (angle) * (ellipseInt.height + deltaHeight * ratio), mixedColor);
-            putPixel (ellipseInt.x + deltaX * ratio + Math.cos (angle) * (ellipseInt.width + deltaWidth * ratio), Math.round (ellipseInt.y + deltaY * ratio + Math.sin (angle) * (ellipseInt.height + deltaHeight * ratio)), mixedColor);
-            putPixel (Math.round (ellipseInt.x + deltaX * ratio + Math.cos (angle) * (ellipseInt.width + deltaWidth * ratio)), ellipseInt.y + deltaY * ratio + Math.sin (angle) * (ellipseInt.height + deltaHeight * ratio), mixedColor);
-            putPixel (Math.round (ellipseInt.x + deltaX * ratio + Math.cos (angle) * (ellipseInt.width + deltaWidth * ratio)), Math.round (ellipseInt.y + deltaY * ratio + Math.sin (angle) * (ellipseInt.height + deltaHeight * ratio)), mixedColor);
+            const xPlot = ellipseInt.x + deltaX * ratio + Math.cos (angle) * (ellipseInt.width + deltaWidth * ratio);
+            const yPlot = ellipseInt.y + deltaY * ratio + Math.sin (angle) * (ellipseInt.height + deltaHeight * ratio); 
+            putPixel (xPlot, yPlot, mixedColor);
+            // The following lines avoid moirés. 
+            putPixel (xPlot, Math.round (yPlot), mixedColor);
+            putPixel (Math.round (xPlot), Math.round (yPlot), mixedColor);
+            putPixel (Math.round (xPlot), yPlot, mixedColor);
         }
     }
 }

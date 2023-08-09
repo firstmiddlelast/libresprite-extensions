@@ -43,27 +43,30 @@ while (pixelSteps.length > 1) {
     const [startPixel, xStart] = pixelSteps.shift ();
     const [finishPixel, xEnd] = pixelSteps [0];
 
-    var r = color.rgbaR (startPixel);
-    var g = color.rgbaG (startPixel);
-    var b = color.rgbaB (startPixel);
+    var startR = color.rgbaR (startPixel);
+    var startG = color.rgbaG (startPixel);
+    var startB = color.rgbaB (startPixel);
     switch (GRADIENT_ORDER) {
         case "RGB":
-            const deltaR = color.rgbaR (finishPixel) - r;
-            const deltaG = color.rgbaG (finishPixel) - g;
-            const deltaB = color.rgbaB (finishPixel) - b;
+            // see https://kevinsimper.medium.com/how-to-average-rgb-colors-together-6cd3ef1ff1e5
+            const deltaR = color.rgbaR (finishPixel) ** 2 - startR ** 2;
+            const deltaG = color.rgbaG (finishPixel) ** 2 - startG ** 2;
+            const deltaB = color.rgbaB (finishPixel) ** 2 - startB ** 2;
 
             const sigmaR = deltaR / (xEnd - xStart);
             const sigmaG = deltaG / (xEnd - xStart);
             const sigmaB = deltaB / (xEnd - xStart);
 
+            var xCounter = 0;
             for (var x = xStart; x < xEnd; x ++) {
+                const r = Math.sqrt (startR ** 2 + sigmaR * (xCounter));
+                const g = Math.sqrt (startG ** 2 + sigmaG * (xCounter));
+                const b = Math.sqrt (startB ** 2 + sigmaB * (xCounter));
                 const pixelColor = color.rgba (r, g, b, 255);
                 for (var y = 0; y < image.height; y ++) {
                     image.putPixel (x, y, pixelColor);
                 }
-                r += sigmaR;
-                g += sigmaG;
-                b += sigmaB;
+                xCounter ++;
             }
             break;
         case "HSL": 

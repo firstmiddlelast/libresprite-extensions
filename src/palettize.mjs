@@ -160,9 +160,11 @@ function setupMixedResults (threshold) {
     for (var color1Index in PALETTE_RGB) {
         for (var color2Index in PALETTE_RGB) {
             for (var ratio = 0; ratio < threshold; ratio ++) {
-                const combinedR = PALETTE_RGB [color1Index] [0] * ratio / threshold + PALETTE_RGB [color2Index] [0] * (1 - ratio / threshold);
-                const combinedG = PALETTE_RGB [color1Index] [1] * ratio / threshold + PALETTE_RGB [color2Index] [1] * (1 - ratio / threshold);
-                const combinedB = PALETTE_RGB [color1Index] [2] * ratio / threshold + PALETTE_RGB [color2Index] [2] * (1 - ratio / threshold);
+                // see https://kevinsimper.medium.com/how-to-average-rgb-colors-together-6cd3ef1ff1e5
+                const multiplier = ratio / threshold;
+                const combinedR = Math.sqrt ((PALETTE_RGB [color1Index] [0] ** 2) * multiplier + (PALETTE_RGB [color2Index] [0] ** 2) * (1 - multiplier));
+                const combinedG = Math.sqrt ((PALETTE_RGB [color1Index] [1] ** 2) * multiplier + (PALETTE_RGB [color2Index] [1] ** 2) * (1 - multiplier));
+                const combinedB = Math.sqrt ((PALETTE_RGB [color1Index] [2] ** 2) * multiplier + (PALETTE_RGB [color2Index] [2] ** 2) * (1 - multiplier));
                 MIXED_RESULT.push ([color1Index, color2Index, ratio, combinedR, combinedG, combinedB, threshold]);
             }
         }
