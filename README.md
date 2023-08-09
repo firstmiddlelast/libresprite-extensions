@@ -2,8 +2,8 @@
 Scripts that generate or update an image (the current layer in a sprite) or the palette. 
 
 ## Download 
-Click on the latest Release (see on the right of the page) and then, in the Assets section, click the "libresprite-extensions" .zip file. 
-Unzip the files in the LibreSprite scripts directory ("Scripts/Open Folder" in LibreSprite), and then select "Scripts/Rescan scripts". 
+Click on the latest **Release** (see on the right of the page) and then, in the Assets section, click the "libresprite-extensions" .zip file. 
+Unzip the files in the LibreSprite scripts directory ("Scripts/Open Folder" in LibreSprite), and then select "Scripts/Rescan scripts" in LibreSprite. 
 
 - `increase`/`decreaseLuminosity` directly increase/decrease the RGB components by 10%.
 
