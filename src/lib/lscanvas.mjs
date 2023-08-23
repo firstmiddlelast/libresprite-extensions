@@ -1,8 +1,22 @@
+const image = require ('./image.mjs');
 const color = app.pixelColor;
-const image = app.activeImage;
+
+export class HorizontalFlipSprite {
+    constructor (image) {
+        this.width = image.width;
+        this.height = image.height;
+        this.getPixel = function (x, y) {
+            return image.getPixel (image.width - 1 - x, y);
+        }
+        this.putPixel = function (x, y, p) {
+            return image.putPixel (image.width - 1 - x, y, p);
+        }
+    }
+}
 
 export class SpriteAsCanvas {
-    constructor () {
+    constructor (image) {
+        this.image = image;
         this.width = image.width;
         this.height = image.height;
         this.data = [];
@@ -35,12 +49,9 @@ export class SpriteAsCanvas {
         var index = 0;
         for (var y = 0; y < this.height; y ++) {
             for (var x = 0; x < this.width; x ++) {
-                if (pixelColor !== undefined && this.data [index] === 255) 
-                    image.putPixel(x, y, pixelColor);
-                /*
-                else 
-                    image.putPixel (x, y, color.rgba (this.data [index], this.data [index + 1], this.data [index + 2], this.data [index + 3]));
-                */
+                if (pixelColor !== undefined && this.data [index] === 255) {
+                    this.image.putPixel(x, y, pixelColor);
+                }
                 index += 4;
             }
         }

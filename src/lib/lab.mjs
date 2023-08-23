@@ -70,9 +70,7 @@ export function labToRgb(lab) {
     return [rInt, gInt, bInt];
 }
 
-const epsilon = 0.008856;
-const kappa = 903.3;
-
+// TODO see http://www.easyrgb.com/en/math.php FIXME
 export function rgbToLab(rgb) {
     // Convert RGB to XYZ
     let r = rgb[0] / 255;
@@ -109,7 +107,7 @@ function pivotRgbToXyz(value) {
 }
 
 function pivotXyzToLab(value) {
-    return (value > epsilon) ? Math.pow(value, 1 / 3) : (kappa * value + 16) / 116;
+    return (value > 0.008856) ? Math.pow(value, 1 / 3) : (903.3 * value + 16) / 116;
 }
 
 export function labDistance (r, g, b, r2, g2, b2) {
