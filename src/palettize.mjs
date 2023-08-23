@@ -83,16 +83,11 @@ A_MATRIX.height = 3;
 const lab = require ('./lib/lab.mjs');
 const rgb = require ('./lib/rgb.mjs');
 const hsl = require ('./lib/hsl.mjs');
+const palette = require ('./lib/palette.mjs');
 
 const color = app.pixelColor;
 const image = app.activeImage;
 
-
-const PALETTE_RGB = [];
-for (var cIndex = 0 ; cIndex < app.activeSprite.palette.length; cIndex ++) {
-    const paletteColor = app.activeSprite.palette.get (cIndex);
-    PALETTE_RGB [cIndex] = [color.rgbaR (paletteColor), color.rgbaG (paletteColor), color.rgbaB (paletteColor)];
-}
 
 const PIXELS = [];
 for (var x = 0; x < image.width; x ++) {
@@ -128,24 +123,11 @@ function diffuseError (x, y, diffusionMatrix, errorR, errorG, errorB) {
     }
 }
 
-function findClosestPaletteColor (r, g, b) {
-    var distance;
-    var colorDistance = Infinity;
-    for (var cIndex = 0 ; cIndex < PALETTE_RGB.length; cIndex ++) {
-        distance = distanceFunction (PALETTE_RGB [cIndex] [0], PALETTE_RGB [cIndex] [1], PALETTE_RGB [cIndex] [2], 
-                                            r, g, b);
-        if (distance < colorDistance) {
-            colorDistance = distance;
-            paletteColor = PALETTE_RGB [cIndex];
-        }
-    }
-    return {color: paletteColor, distance: colorDistance};
-}
 function findClosestMixedColor (pixelR, pixelG, pixelB) {
     var minDistance = Infinity;
     var closestMixedColor;
     for (var mixedColor of MIXED_RESULT) {
-        const d = distanceFunction (pixelR, pixelG, pixelB, mixedColor [3], mixedColor [4], mixedColor [5]) + distanceFunction (...PALETTE_RGB [mixedColor [0]],...PALETTE_RGB [mixedColor [1]]) * 0.1 * (Math.abs (mixedColor [2] / mixedColor [6] - 0.5) + 0.5); // NOTE see https://bisqwit.iki.fi/story/howto/dither/jy/
+        const d = distanceFunction (pixelR, pixelG, pixelB, mixedColor [3], mixedColor [4], mixedColor [5]) + distanceFunction (...palette.PALETTE_RGB [mixedColor [0]],...palette.PALETTE_RGB [mixedColor [1]]) * 0.1 * (Math.abs (mixedColor [2] / mixedColor [6] - 0.5) + 0.5); // NOTE see https://bisqwit.iki.fi/story/howto/dither/jy/
         if (d < minDistance) {
             minDistance = d;
             closestMixedColor = mixedColor;
@@ -157,14 +139,14 @@ function findClosestMixedColor (pixelR, pixelG, pixelB) {
 var MIXED_RESULT;
 function setupMixedResults (threshold) {
     MIXED_RESULT = [];
-    for (var color1Index in PALETTE_RGB) {
-        for (var color2Index in PALETTE_RGB) {
+    for (var color1Index in palette.PALETTE_RGB) {
+        for (var color2Index in palette.PALETTE_RGB) {
             for (var ratio = 0; ratio < threshold; ratio ++) {
                 // see https://kevinsimper.medium.com/how-to-average-rgb-colors-together-6cd3ef1ff1e5
                 const multiplier = ratio / threshold;
-                const combinedR = Math.sqrt ((PALETTE_RGB [color1Index] [0] ** 2) * multiplier + (PALETTE_RGB [color2Index] [0] ** 2) * (1 - multiplier));
-                const combinedG = Math.sqrt ((PALETTE_RGB [color1Index] [1] ** 2) * multiplier + (PALETTE_RGB [color2Index] [1] ** 2) * (1 - multiplier));
-                const combinedB = Math.sqrt ((PALETTE_RGB [color1Index] [2] ** 2) * multiplier + (PALETTE_RGB [color2Index] [2] ** 2) * (1 - multiplier));
+                const combinedR = Math.sqrt ((palette.PALETTE_RGB [color1Index] [0] ** 2) * multiplier + (palette.PALETTE_RGB [color2Index] [0] ** 2) * (1 - multiplier));
+                const combinedG = Math.sqrt ((palette.PALETTE_RGB [color1Index] [1] ** 2) * multiplier + (palette.PALETTE_RGB [color2Index] [1] ** 2) * (1 - multiplier));
+                const combinedB = Math.sqrt ((palette.PALETTE_RGB [color1Index] [2] ** 2) * multiplier + (palette.PALETTE_RGB [color2Index] [2] ** 2) * (1 - multiplier));
                 MIXED_RESULT.push ([color1Index, color2Index, ratio, combinedR, combinedG, combinedB, threshold]);
             }
         }
@@ -182,17 +164,17 @@ function setDitheredPixel (threshold, ditherValue, x, y, pixelR, pixelG, pixelB)
     if (MIXED_RESULT === undefined) setupMixedResults (threshold);  // NOTE Ugly, should be initialized out of the xy pixel loop
     const closestMixedColor = cachedClosestMixedColor (pixelR, pixelG, pixelB);   // TODO inline this function
     if (ditherValue < closestMixedColor [2]) {
-        PIXELS [x] [y] = [...PALETTE_RGB [closestMixedColor [0]], 255];
+        PIXELS [x] [y] = [...palette.PALETTE_RGB [closestMixedColor [0]], 255];
     }
     else {
-        PIXELS [x] [y] = [...PALETTE_RGB [closestMixedColor [1]], 255]
+        PIXELS [x] [y] = [...palette.PALETTE_RGB [closestMixedColor [1]], 255]
     }
 }
 
 for (var y = 0; y < image.height; y ++) {
   for (var x = 0; x < image.width; x ++) {
     const [pixelR, pixelG, pixelB] = PIXELS [x] [y];
-    const [r, g, b] = findClosestPaletteColor (pixelR, pixelG, pixelB).color;
+    const [r, g, b] = palette.findClosestPaletteColor (pixelR, pixelG, pixelB, distanceFunction).color;
     // NOTE The three following lines are only useful with error diffusion dithering
     PIXELS [x] [y] = [r, g, b, PIXELS [x] [y] [3]];
     const errorR = pixelR - r;
