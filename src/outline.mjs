@@ -1,6 +1,28 @@
+const E = [-1, 0];
+const W = [1, 0];
+const S = [0, -1];
+const N = [0, 1];
+const SW = [1, -1];
+const NW = [1, 1];
+const NE = [-1, 1];
+const SE = [-1, -1];
+const SIMPLE = [N, S, E, W];
+const DIAG = [NE, NW, SE, SW];
+const ALL = [...SIMPLE, ...DIAG];
+
+
+
+
+
+
+
+
+
+
+
 /** EDIT THE FOLLOWIN LINES TO FIT YOUR NEEDS. */
-const OUTLINE_COLOR = [255, 0, 0, 255];     // Replace the numbers between parenthesis with the Red, Green, Blue and Alpha components (between 0 and 255) of the outline color. Alpha MUST NOT be 0. 
-const OUTLINE_DIAGONALS = true;    // Replace false with true if you want to outline diagonally. 
+const OUTLINE_COLOR = [0, 0, 0, 255];     // Replace the numbers between parenthesis with the Red, Green, Blue and Alpha components (between 0 and 255) of the outline color. Alpha MUST NOT be 0. 
+const OUTLINE_DIRECTIONS = [SIMPLE];  // Insert the outline directions, BETWEEN BRACKETS, separated by commas. ex: S, E for South plus East (outlines on the bottom and on the right). INSTEAD OF THE DIRECTIONS, you can also specify SIMPLE for N, S, E, W, and ALL for all directions.
 
 
 
@@ -9,26 +31,12 @@ const OUTLINE_DIAGONALS = true;    // Replace false with true if you want to out
 
 
 
+
+
+const directions = (OUTLINE_DIRECTIONS [0] [0] instanceof Array) ? OUTLINE_DIRECTIONS [0] : OUTLINE_DIRECTIONS;
 /*
 Fill code modified from https://codeheir.com/2022/08/21/comparing-flood-fill-algorithms-in-javascript/
 */
-var directions = (OUTLINE_DIAGONALS)? 
-[
-  [1, 0],
-  [1, 1], 
-  [1, -1],
-  [-1, 0],
-  [-1, 1],
-  [-1, -1],
-  [0, 1],
-  [0, -1],
-]:
-[
-  [1, 0],
-  [-1, 0],
-  [0, 1],
-  [0, -1],
-];
 function fill_outline (x, y, width, height) {
     if (DEBUG) console.log ("Filling from " + x + "," + y);
     const queue = [{x: x, y: y}];
