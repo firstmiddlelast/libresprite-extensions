@@ -46,25 +46,26 @@ function patch_rect_error (distance_func, image1, image2, coords1, coords2, rect
     }
     return error;
 }
-
 export function quilt_image (imageSource, quiltParams) {
     source = imageSource;
     params = quiltParams;
     const [img_width, img_height] = source.dimensions;
-    const step = params.patch_size - params.overlap;
-    const x_patches = Math.ceil (params.size [0] / step);
-    const y_patches = Math.ceil (params.size [1] / step);
-    const [buffer_width, buffer_height] = [params.size [0] + params.patch_size, params.size [1] + params.patch_size];
+    const step_x = params.patch_size_x - params.overlap_x;
+    const step_y = params.patch_size_y - params.overlap_y;
+    //const step = params.patch_size - params.overlap;
+    const x_patches = Math.ceil (params.size [0] / step_x);
+    const y_patches = Math.ceil (params.size [1] / step_y);
+    const [buffer_width, buffer_height] = [params.size [0] + params.patch_size_x, params.size [1] + params.patch_size_y];
     buffer_opt = new Image (buffer_width, buffer_height);
 
     blit_rect (buffer_opt, source, {coords: (params.seed_coords !== undefined) ? params.seed_coords 
-        : [Math.floor (rng () * (img_width - params.patch_size)), Math.floor (rng () * (img_height - params.patch_size))], 
-        size: [params.patch_size, params.patch_size]}, [0, 0]);
+        : [Math.floor (rng () * (img_width - params.patch_size_x)), Math.floor (rng () * (img_height - params.patch_size_y))], 
+        size: [params.patch_size_x, params.patch_size_y]}, [0, 0]);
     for (var patch_y = 0; patch_y < y_patches; patch_y ++) {
         for (var patch_x = 0; patch_x < x_patches; patch_x ++) {
             if (patch_x === 0 && patch_y === 0) continue;
             const area = patch_overlap_area([patch_x, patch_y]);
-            const corner = [patch_x * step, patch_y * step];
+            const corner = [patch_x * step_x, patch_y * step_y];
             const candidate = select_candidate (area, corner);
             const err_surf = patch_error_surface (area, candidate, corner);
             cut_and_blit_patch (candidate, corner, err_surf, area);
@@ -78,18 +79,18 @@ export function quilt_image (imageSource, quiltParams) {
 function patch_error (area, patch, buf_coords) {
     const buffer = buffer_opt;
     switch (area) {
-        case TOP: return patch_rect_error (params.distance_func, source, buffer, patch.coords, buf_coords, [params.overlap, patch.size]);
-        case LEFT: return patch_rect_error (params.distance_func, source, buffer, patch.coords, buf_coords, [patch.size, params.overlap]);
-        case TOP_LEFT: return patch_rect_error (params.distance_func, source, buffer, patch.coords, buf_coords, [params.size, patch.overlap]) +
-            patch_rect_error (params.distance_func, source, buffer, [patch.coords [0], patch.coords [1] + params.overlap], 
-                [buf_coords [0], buf_coords [1] + params.overlap], [params.overlap, patch.size - params.overlap]);
+        case TOP: return patch_rect_error (params.distance_func, source, buffer, patch.coords, buf_coords, [params.overlap_x, patch.size_y]);
+        case LEFT: return patch_rect_error (params.distance_func, source, buffer, patch.coords, buf_coords, [patch.size_x, params.overlap_y]);
+        case TOP_LEFT: return patch_rect_error (params.distance_func, source, buffer, patch.coords, buf_coords, [params.size_x, patch.overlap_y]) +
+            patch_rect_error (params.distance_func, source, buffer, [patch.coords [0], patch.coords [1] + params.overlap_y], 
+                [buf_coords [0], buf_coords [1] + params.overlap_y], [params.overlap_x, patch.size_y - params.overlap_y]);
     }
 }
 
 // Find a candidate patch to be quilted at the specified coordinates on the buffer.
 function select_candidate (area, buf_coords) {
     const [w, h] = source.dimensions;
-    const [max_x, max_y] = [w - params.patch_size, h - params.patch_size];
+    const [max_x, max_y] = [w - params.patch_size_x, h - params.patch_size_y];
     var scores = [];
     var best = Infinity;
     if (params.selection_chance !== undefined) {
@@ -98,7 +99,7 @@ function select_candidate (area, buf_coords) {
                 for (var x = 0; x < max_x + 1; x ++) {
                     const d = rng ();
                     if (d > params.selection_chance) {
-                        const p = {coords: [x, y], size: params.patch_size};
+                        const p = {coords: [x, y], size_x: params.patch_size_x, size_y: params.patch_size_y};
                         const error = patch_error (area, p, buf_coords);
                         if (error < best * (1 + TOLERANCE)) {
                             best = (error < best) ? error : best;
@@ -112,7 +113,7 @@ function select_candidate (area, buf_coords) {
     else {
         for (var y = 0; y < max_y + 1; y ++) {
             for (var x = 0; x < max_x + 1; x ++) {
-                const p = {coords: [x, y], size: params.patch_size};
+                const p = {coords: [x, y], size_x: params.patch_size_x, size_y: params.patch_size_y};
                 const error = patch_error (area, p, buf_coords);
                 if (error < best * (1 + TOLERANCE)) {
                     if (error < best) {
@@ -135,37 +136,37 @@ function select_candidate (area, buf_coords) {
     
 // Compute the error surface of the specified patch.
 function patch_error_surface (area, patch, buf_coords) {
-    const err_surf = new Image (params.patch_size, params.patch_size, [0]);
+    const err_surf = new Image (params.patch_size_x, params.patch_size_y, [0]);
     const [xs, ys] = buf_coords;
     const [px, py] = patch.coords;
     const dist = params.distance_func;
     switch (area) {
         case TOP : 
-            for (var x = 0; x < params.patch_size; x ++) {
-                for (var y = 0; y < params.overlap; y ++) {
-                    const err = dist (source.get_pixel (px + x, py + y), buffer_opt.get_pixel (xs + x, ys + x)); // QUESTION pourquoi ys+X et non ys+Y???
+            for (var x = 0; x < params.patch_size_x; x ++) {
+                for (var y = 0; y < params.overlap_y; y ++) {
+                    const err = dist (source.get_pixel (px + x, py + y), buffer_opt.get_pixel (xs + x, ys + y));
                     err_surf.put_pixel (x, y, [err]);
                 }
             }
             break;
         case LEFT : 
-            for (var x = 0; x < params.overlap; x ++) {
-                for (var y = 0; y < params.patch_size; y ++) {
-                    const err = dist (source.get_pixel (px + x, py + y), buffer_opt.get_pixel (xs + x, ys + x));
+            for (var x = 0; x < params.overlap_x; x ++) {
+                for (var y = 0; y < params.patch_size_y; y ++) {
+                    const err = dist (source.get_pixel (px + x, py + y), buffer_opt.get_pixel (xs + x, ys + y));
                     err_surf.put_pixel (x, y, [err]);
                 }
             }
             break;
         case TOP_LEFT:
-            for (var x = 0; x < params.patch_size; x ++) {
-                for (var y = 0; y < params.overlap; y ++) {
-                    const err = dist (source.get_pixel (px + x, py + y), buffer_opt.get_pixel (xs + x, ys + x));
+            for (var x = 0; x < params.patch_size_x; x ++) {
+                for (var y = 0; y < params.overlap_y; y ++) {
+                    const err = dist (source.get_pixel (px + x, py + y), buffer_opt.get_pixel (xs + x, ys + y));
                     err_surf.put_pixel (x, y, [err]);
                 }
             }
-            for (var x = 0; x < params.overlap; x ++) {
-                for (var y = 0; y < params.patch_size; y ++) {
-                    const err = dist (source.get_pixel (px + x, py + y), buffer_opt.get_pixel (xs + x, ys + x));
+            for (var x = 0; x < params.overlap_x; x ++) {
+                for (var y = 0; y < params.patch_size_y; y ++) {
+                    const err = dist (source.get_pixel (px + x, py + y), buffer_opt.get_pixel (xs + x, ys + y));
                     err_surf.put_pixel (x, y, [err]);
                 }
             }
@@ -177,7 +178,7 @@ function patch_error_surface (area, patch, buf_coords) {
 function vertical_cost_map (err_surf) {
 
 
-    function pixel_error (cost_map, e, overlap, x, y) {
+    function pixel_error (cost_map, e, overlap_x, x, y) {
         if (cost_map.has ([x, y])) {
             return cost_map.get ([x, y]);
         }
@@ -189,13 +190,13 @@ function vertical_cost_map (err_surf) {
         }
         
         // Find the minimal pixel_error value between x-1, x, and x+1
-        var val = pixel_error (cost_map, e, overlap, x, y - 1);
+        var val = pixel_error (cost_map, e, overlap_x, x, y - 1);
         if (x !== 0) {
-            const v = pixel_error (cost_map, e, overlap, x - 1, y - 1);
+            const v = pixel_error (cost_map, e, overlap_x, x - 1, y - 1);
             if (v < val) { val = v; }
         }
-        if (x !== (overlap - 1)) {
-            const v = pixel_error (cost_map, e, overlap, x + 1, y - 1);
+        if (x !== (overlap_x - 1)) {
+            const v = pixel_error (cost_map, e, overlap_x, x + 1, y - 1);
             if (v < val) { val = v; }
         }
         val += e.get_pixel (x, y) [0];
@@ -214,8 +215,8 @@ function vertical_cost_map (err_surf) {
     cost_map.set = function ([x, y], v) {
         this [[x, y]] = v;
     }
-    for (var x = 0; x < params.overlap; x ++) {
-        pixel_error (cost_map, err_surf, params.overlap, x, params.patch_size - 1);
+    for (var x = 0; x < params.overlap_x; x ++) {
+        pixel_error (cost_map, err_surf, params.overlap_x, x, params.patch_size_y - 1);
     }
     return cost_map;
 }
@@ -225,15 +226,15 @@ function minimum_cost_vertical_path (err_surf) {
 
     // Find path starting point
     var x;
-    var min_cost = cost_map.get ([0, params.patch_size - 1]);
-    for (var x_map = 0; x_map < params.overlap; x_map ++) {
-        const cost = cost_map.get ([x_map, params.patch_size - 1]);
+    var min_cost = cost_map.get ([0, params.patch_size_y - 1]);
+    for (var x_map = 0; x_map < params.overlap_x; x_map ++) {
+        const cost = cost_map.get ([x_map, params.patch_size_y - 1]);
         if (cost < min_cost) {
             x = x_map;
             min_cost = cost;
         }
     }
-    var y = params.patch_size - 1;
+    var y = params.patch_size_y - 1;
     v.push ([x, y]);
     while (y != 0) {
         const top = cost_map.get ([x, y - 1]);
@@ -241,7 +242,7 @@ function minimum_cost_vertical_path (err_surf) {
             const right = cost_map.get ([x + 1, y - 1]);
             if (right < top) {x += 1;}
         }
-        else if (x === params.overlap - 1) {
+        else if (x === params.overlap_x - 1) {
                 const left = cost_map.get ([x - 1, y - 1]);
                 if (left < top) {x -= 1;}
             }
@@ -261,7 +262,7 @@ function minimum_cost_vertical_path (err_surf) {
 
 function horizontal_cost_map (err_surf) {
 
-    function pixel_error (cost_map, e, overlap, x, y) {
+    function pixel_error (cost_map, e, overlap_y, x, y) {
         if (cost_map.has ([x, y])) {
             return cost_map.get ([x, y]);
         }
@@ -271,13 +272,13 @@ function horizontal_cost_map (err_surf) {
             cost_map.set ([x, y], v);
             return v;
         }
-        var val = pixel_error (cost_map, e, overlap, x - 1, y);
+        var val = pixel_error (cost_map, e, overlap_y, x - 1, y);
         if (y !== 0) {
-            const v = pixel_error (cost_map, e, overlap, x - 1, y - 1);
+            const v = pixel_error (cost_map, e, overlap_y, x - 1, y - 1);
             if (v < val) {val = v;}
         }
-        if (y !== overlap - 1) {
-            const v = pixel_error (cost_map, e, overlap, x - 1, y + 1);
+        if (y !== overlap_y - 1) {
+            const v = pixel_error (cost_map, e, overlap_y, x - 1, y + 1);
             if (v < val) {val = v;}
         }
         val += e.get_pixel (x, y) [0];
@@ -295,8 +296,8 @@ function horizontal_cost_map (err_surf) {
     cost_map.set = function ([x, y], v) {
         this [[x, y]] = v;
     }
-    for (var y = 0; y < params.overlap; y ++) {
-        pixel_error (cost_map, err_surf, params.overlap, params.patch_size - 1, y);
+    for (var y = 0; y < params.overlap_y; y ++) {
+        pixel_error (cost_map, err_surf, params.overlap_y, params.patch_size_x - 1, y);
     }
     return cost_map;
 }
@@ -308,15 +309,15 @@ function minimum_cost_horizontal_path (err_surf) {
 
     // Find path starting point
     var y;
-    var min_cost = cost_map.get ([params.patch_size - 1, 0]);
-    for (var y_map = 0; y_map < params.overlap; y_map ++) {
-        var cost = cost_map.get ([params.patch_size - 1, y_map]);
+    var min_cost = cost_map.get ([params.patch_size_x - 1, 0]);
+    for (var y_map = 0; y_map < params.overlap_y; y_map ++) {
+        var cost = cost_map.get ([params.patch_size_x - 1, y_map]);
         if (cost < min_cost) {
             min_cost = cost;
             y = y_map;
         }
     }
-    var x = params.patch_size - 1;
+    var x = params.patch_size_x - 1;
     v.push ([x, y]);
     while (x != 0) {
         const left = cost_map.get ([x - 1, y]);
@@ -324,7 +325,7 @@ function minimum_cost_horizontal_path (err_surf) {
             const down = cost_map.get ([x - 1, y + 1]);
             if (down < left) {y += 1;}
         }
-        else if (y === params.overlap - 1) {
+        else if (y === params.overlap_y - 1) {
                 const up = cost_map.get ([x - 1, y - 1]);
                 if (up < left) {y -= 1;}
             }
@@ -346,7 +347,7 @@ function cut_and_blit_vertical (patch, buf_coords, path) {
     const buffer = buffer_opt;
     for (var [xp, yp] of path) {
         if (yp + patch.coords [1] < buffer.height ()) {
-            for (var x = 0; x < params.overlap; x ++) {
+            for (var x = 0; x < params.overlap_x; x ++) {
                 if (x >= xp && x < buffer.width ()) {
                     buffer.put_pixel (buf_coords [0] + x, buf_coords [1] + yp, source.get_pixel (patch.coords [0] + x, patch.coords [1] + yp));
                 }
@@ -359,7 +360,7 @@ function cut_and_blit_horizontal (patch, buf_coords, path) {
     const buffer = buffer_opt;
     for (var [xp, yp] of path) {
         if (xp + patch.coords [0] < buffer.width ()) {
-            for (var y = 0; y < params.overlap; y ++) {
+            for (var y = 0; y < params.overlap_y; y ++) {
                 if (y >= yp && y < buffer.height ()) {
                     buffer.put_pixel (buf_coords [0] + xp, buf_coords [1] + y, source.get_pixel (patch.coords [0] + xp, patch.coords [1] + y));
                 }
@@ -369,7 +370,8 @@ function cut_and_blit_horizontal (patch, buf_coords, path) {
 }
 
 function cut_and_blit_corner (patch, buf_coords, hpath, vpath) {
-    const overlap = params.overlap;
+    const overlap_x = params.overlap_x;
+    const overlap_y = params.overlap_y;
     const do_pixel = function (x, y) {
         const buffer = buffer_opt;
         const hpos = hpath.find (c => c[0] === x);
@@ -378,15 +380,16 @@ function cut_and_blit_corner (patch, buf_coords, hpath, vpath) {
             buffer.put_pixel (buf_coords [0] + x, buf_coords [1] + y, source.get_pixel (patch.coords [0] + x, patch.coords [1] + y));
         }
     }
-    for (var x = 0; x < overlap; x ++) {
-        for (var y = 0; y < overlap; y ++) {
+    for (var x = 0; x < overlap_x; x ++) {
+        for (var y = 0; y < overlap_y; y ++) {
             do_pixel (x, y);
         }
     }
 }
 
 function cut_and_blit_patch (patch, buf_coords, err_surf, area) {
-    const overlap = params.overlap;
+    const overlap_x = params.overlap_x;
+    const overlap_y = params.overlap_y;
     var vpath;
     var hpath;
     switch (area) {
@@ -394,23 +397,23 @@ function cut_and_blit_patch (patch, buf_coords, err_surf, area) {
             vpath = minimum_cost_vertical_path (err_surf);
             cut_and_blit_vertical (patch, buf_coords, vpath);
             var buffer = buffer_opt; 
-            blit_rect (buffer, source, {coords: [patch.coords [0] + overlap, patch.coords[1]],
-                size: [params.patch_size - overlap, params.patch_size]}, 
-                [buf_coords [0] + overlap, buf_coords [1]]);
+            blit_rect (buffer, source, {coords: [patch.coords [0] + overlap_x, patch.coords[1]],
+                size: [params.patch_size_x - overlap_x, params.patch_size_y]}, 
+                [buf_coords [0] + overlap_x, buf_coords [1]]);
             break;
         case TOP:
             hpath = minimum_cost_horizontal_path (err_surf);
             cut_and_blit_horizontal (patch, buf_coords, hpath);
             var buffer = buffer_opt;
-            blit_rect (buffer, source, {coords: [patch.coords [0], patch.coords[1] + overlap],
-                size: [params.patch_size, params.patch_size - overlap]}, 
-                [buf_coords [0], buf_coords [1] + overlap]);
+            blit_rect (buffer, source, {coords: [patch.coords [0], patch.coords[1] + overlap_y],
+                size: [params.patch_size_x, params.patch_size_y - overlap_y]}, 
+                [buf_coords [0], buf_coords [1] + overlap_y]);
             break;
         case TOP_LEFT:
             vpath = [];
             const vpath_corner = [];
             for (var [x, y] of minimum_cost_vertical_path (err_surf)) {
-                if (y >= overlap) {
+                if (y >= overlap_y) {
                     vpath.push ([x, y]);
                 }
                 else {
@@ -420,7 +423,7 @@ function cut_and_blit_patch (patch, buf_coords, err_surf, area) {
             hpath = [];
             const hpath_corner = [];
             for ([x, y] of minimum_cost_horizontal_path (err_surf)) {
-                if (x >= overlap) {
+                if (x >= overlap_x) {
                     hpath.push ([x, y]);
                 }
                 else {
@@ -431,8 +434,8 @@ function cut_and_blit_patch (patch, buf_coords, err_surf, area) {
             cut_and_blit_horizontal (patch, buf_coords, hpath);
             cut_and_blit_corner (patch, buf_coords, hpath_corner, vpath_corner);
             var buffer = buffer_opt;
-            blit_rect (buffer, source, {coords: [patch.coords [0] + overlap, patch.coords [1] + overlap], 
-                size: [params.patch_size - overlap, params.patch_size - overlap]}, [buf_coords [0] + overlap, buf_coords [1] + overlap]);
+            blit_rect (buffer, source, {coords: [patch.coords [0] + overlap_x, patch.coords [1] + overlap_y], 
+                size: [params.patch_size_x - overlap_x, params.patch_size_y - overlap_y]}, [buf_coords [0] + overlap_x, buf_coords [1] + overlap_y]);
             break;
     }
 }
