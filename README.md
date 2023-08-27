@@ -1,5 +1,5 @@
 # libresprite-extensions
-Scripts that generate or update an image (the current layer in a sprite) or the palette. 
+Scripts that generate or update an image (the current layer in a sprite) or the palette. For additional information about the LibreSprite API, go check the [Wiki](https://github.com/firstmiddlelast/libresprite-extensions/wiki). 
 
 ## Download 
 Click on the latest **Release** (see on the right of the page) and then, in the Assets section, click the "libresprite-extensions" .zip file. 
